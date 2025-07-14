@@ -2,6 +2,7 @@ import { UserButton } from "@clerk/nextjs";
 import { Bell, ChevronDown, Search } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import MobileMenu from "./mobile-menu";
 
 type Props ={};
 
@@ -21,7 +22,7 @@ const Navbar = (props: Props) => {
         </Link>
 
         {/* Mobile Menu Placeholder */}
-        <div className="md:hidden">{/* <MobileMenu /> */}</div>
+        <div className="md:hidden"><MobileMenu /></div>
 
         {/* Desktop Navigation */}
         <ul className="hidden md:flex space-x-6 text-white text-sm font-medium">
