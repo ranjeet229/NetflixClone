@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useActionState, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import {
@@ -10,16 +11,26 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import Upload from "./upload-imagekit";
+import { uploadVideo } from "@/actions/upload";
 
-type Props = {};
 
-const UploadFormFields = (props: Props) => {
-  const isPending = false;
+const UploadVideoFormFields = () => {
+  const [videoUrl, setVideoUrl] = useState<string>("");
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
+  const [formState, action, isPending] = useActionState(uploadVideo, {
+    errors: {},
+  });
+  const onSubmitHandler = (formData: FormData) => {
+    // add videoUrl in formData
+    formData.append("videoUrl", videoUrl);
+    formData.append("thumbnailUrl", thumbnailUrl);
+    return action(formData);
+  };
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add New Movie</h1>
 
-      <form action="" className="space-y-6">
+      <form action={onSubmitHandler} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="movieName" className="block">
             Movie Name
@@ -30,6 +41,9 @@ const UploadFormFields = (props: Props) => {
             type="text"
             placeholder="Enter movie name"
           />
+          {formState.errors.movieName && (
+            <p className="text-red-500 text-sm">{formState.errors.movieName}</p>
+          )}
         </div>
 
         {/* Description */}
@@ -43,11 +57,16 @@ const UploadFormFields = (props: Props) => {
             type="text"
             placeholder="Enter movie description"
           />
+          {formState.errors.description && (
+            <p className="text-red-500 text-sm">
+              {formState.errors.description}
+            </p>
+          )}
         </div>
 
         {/* Category */}
         <div className="space-y-2">
-          <Label htmlFor="category" className="block">
+          <Label htmlFor="category" className="block mb-2">
             Category
           </Label>
           <Select name="category">
@@ -61,12 +80,18 @@ const UploadFormFields = (props: Props) => {
               <SelectItem value="trending">Trending</SelectItem>
             </SelectContent>
           </Select>
+          {formState.errors.category && (
+            <p className="text-red-500 text-sm">{formState.errors.category}</p>
+          )}
         </div>
         <div className="space-y-6">
           <Label>Thumbnail File</Label>
-          <Upload />
+          <Upload setThumbnailUrl={setThumbnailUrl} />
         </div>
-
+        <div className="space-y-6">
+          <Label>Movie File</Label>
+          <Upload setVideoUrl={setVideoUrl} />
+        </div>
         <Button
           type="submit"
           className="w-full cursor-pointer"
@@ -79,4 +104,4 @@ const UploadFormFields = (props: Props) => {
   );
 };
 
-export default UploadFormFields;
+export default UploadVideoFormFields;
